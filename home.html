@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ravi Kumar - Flutter Developer</title>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS script from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Custom Tailwind configuration for light/dark themes and fonts -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              // Dark Mode Colors
+              'bg-dark': '#0f172a', // Slate-900
+              'card-dark': '#1e293b', // Slate-800
+              'text-dark': '#f1f5f9', // Slate-100
+              'border-dark': '#334155', // Slate-700
+              // Accent Colors
+              'primary': '#3b82f6', // Blue-500
+              'secondary': '#6366f1', // Indigo-500
+              'tertiary': '#14b8a6', // Teal-500
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Smooth scrolling for anchor links */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Add a subtle background image using a base64 encoded SVG pattern */
+      body {
+        background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231f2937' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M0 0h8v8H0V0zm2 2h4v4H2V2zm8 8h4v4h-4v-4z'/%3E%3C/g%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 16px;
+      }
+
+      /* Custom scrollbar for better aesthetics */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #334155;
+        border-radius: 4px;
+        border: 2px solid #0f172a;
+      }
+      /* Blink animation for the typing cursor */
+      .blinking-cursor {
+        font-weight: 100;
+        font-size: 1.25em;
+        animation: 1s blink step-end infinite;
+      }
+      @keyframes blink {
+        from, to {
+          color: transparent;
+        }
+        50% {
+          color: currentColor;
+        }
+      }
+      
+      /* Skill Card Hover Effect */
+      .skill-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .skill-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Project Card Hover Effect */
+      .project-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .project-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Simple Modal Styling */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 100; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+        animation: fadeIn 0.3s ease;
+      }
+      .modal-content {
+        background-color: #1e293b;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 24px;
+        border: 1px solid #334155;
+        width: 80%; /* Could be more or less, depending on screen size */
+        max-width: 600px;
+        border-radius: 8px;
+        position: relative;
+        animation: slideInTop 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideInTop {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .close-btn {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close-btn:hover,
+      .close-btn:focus {
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .loader {
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid #3b82f6;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
+    </style>
+</head>
+<body class="bg-bg-dark text-text-dark font-sans leading-relaxed antialiased transition-colors duration-500">
+
+    <!-- Header and Navigation -->
+    <header class="sticky top-0 z-50 bg-card-dark/80 backdrop-blur-sm shadow-lg transition-colors duration-500">
+        <nav class="max-w-screen-xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-text-dark hover:text-primary transition duration-300">Ravi Kumar</a>
+            <div class="flex items-center space-x-6">
+                <a href="#about" class="hidden md:inline-block text-gray-400 hover:text-primary transition duration-300">About</a>
+                <a href="#skills" class="hidden md:inline-block text-gray-400 hover:text-primary transition duration-300">Skills</a>
+                <a href="#projects" class="hidden md:inline-block text-gray-400 hover:text-primary transition duration-300">Projects</a>
+                <a href="#contact" class="hidden md:inline-block text-gray-400 hover:text-primary transition duration-300">Contact</a>
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-lg text-gray-400 hover:text-primary focus:outline-none transition duration-300">
+                    <i id="theme-icon" class="fas fa-sun"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto px-6">
+
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center">
+            <div class="space-y-6">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-text-dark">
+                    Hello, I'm <span class="text-primary">Ravi Kumar</span>.
+                </h1>
+                <p id="typewriter-text" class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto min-h-[3rem]"></p>
+                <div class="flex justify-center space-x-4 pt-4">
+                    <a href="#projects" class="bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-3 px-8 rounded-lg shadow-lg">View My Work</a>
+                    <a href="#contact" id="get-in-touch-btn" class="bg-card-dark hover:bg-card-dark/80 transition duration-300 text-gray-400 font-bold py-3 px-8 rounded-lg shadow-lg">Get In Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 md:py-24">
+            <h2 class="text-3xl font-bold text-center text-text-dark mb-12">About Me</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12 max-w-5xl mx-auto bg-card-dark rounded-lg p-8 shadow-xl">
+                <div class="flex-shrink-0 w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <img id="profile-pic" alt="Ravi Kumar" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/256x256/1e293b/f1f5f9?text=Ravi'">
+                </div>
+                <div class="flex-grow max-w-3xl space-y-6 text-lg text-gray-400 text-center md:text-left">
+                    <p id="professional-summary">
+                        Dynamic Flutter Developer with hands-on experience in designing and delivering robust, scalable cross-platform mobile applications using Flutter and Dart. Expert in advanced state management (GetX, Riverpod, Provider, BLOC), Firebase integration, and clean architecture patterns. Proven leadership as a team lead, driving high-performance app launches with optimized UI/UX, enhanced reliability, and measurable performance improvements. Skilled in API integration, agile methodologies. Passionate about building seamless user experiences and delivering impactful solutions.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <!-- Gemini API Button to Generate Pitch -->
+                        <button id="generate-pitch-btn" class="bg-secondary hover:bg-secondary/80 transition duration-300 text-white font-bold py-3 px-8 rounded-lg shadow-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-magic"></i><span> Generate Pitch ✨</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 md:py-24">
+            <h2 class="text-3xl font-bold text-center text-text-dark mb-12">My Skills</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 max-w-5xl mx-auto px-6">
+                <!-- Skill Card: Dart -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Dart">
+                    <span class="text-4xl text-primary"><i class="fas fa-code"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Dart</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Flutter -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Flutter">
+                    <span class="text-4xl text-primary"><i class="fas fa-mobile-alt"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Flutter</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: GetX -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="GetX">
+                    <span class="text-4xl text-primary"><i class="fas fa-layer-group"></i></span>
+                    <p class="text-lg font-medium text-text-dark">GetX</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Riverpod -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Riverpod">
+                    <span class="text-4xl text-primary"><i class="fas fa-stream"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Riverpod</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Provider -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Provider">
+                    <span class="text-4xl text-primary"><i class="fas fa-link"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Provider</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Firebase -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Firebase">
+                    <span class="text-4xl text-primary"><i class="fas fa-fire"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Firebase</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: REST APIs -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="REST APIs">
+                    <span class="text-4xl text-primary"><i class="fas fa-exchange-alt"></i></span>
+                    <p class="text-lg font-medium text-text-dark">REST APIs</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Figma -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Figma">
+                    <span class="text-4xl text-primary"><i class="fab fa-figma"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Figma</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Postman -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Postman">
+                    <span class="text-4xl text-primary"><i class="fas fa-envelope-open-text"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Postman</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: AI -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="AI">
+                    <span class="text-4xl text-primary"><i class="fas fa-robot"></i></span>
+                    <p class="text-lg font-medium text-text-dark">AI</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Git -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Git">
+                    <span class="text-4xl text-primary"><i class="fas fa-code-branch"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Git</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+                <!-- Skill Card: Clean Architecture -->
+                <div class="skill-card flex flex-col items-center space-y-4 p-6 bg-card-dark rounded-xl shadow-lg border border-border-dark" data-skill="Clean Architecture">
+                    <span class="text-4xl text-primary"><i class="fas fa-sync-alt"></i></span>
+                    <p class="text-lg font-medium text-text-dark">Clean Arch.</p>
+                    <button class="explain-skill-btn mt-2 bg-tertiary hover:bg-tertiary/80 transition duration-300 text-white font-bold py-1 px-4 text-xs rounded-lg shadow-sm">
+                        Explain ✨
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-24">
+            <h2 class="text-3xl font-bold text-center text-text-dark mb-12">My Projects</h2>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+                <!-- Project Card 1: News App -->
+                <div class="project-card bg-card-dark rounded-lg shadow-lg overflow-hidden border border-border-dark p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold text-text-dark mb-2">News App</h3>
+                    <p class="project-description text-gray-400 mb-4 flex-grow">A Flutter-based news application for staying up-to-date with the latest headlines and articles.</p>
+                    <div class="flex space-x-2 mt-auto">
+                        <a href="https://github.com/ravikumarsaini3/News_app_flutter" target="_blank" class="flex-1 inline-block bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-center text-sm">
+                            View Repository &rarr;
+                        </a>
+                        <!-- Gemini API button to generate description -->
+                        <button class="generate-desc-btn flex-1 bg-secondary hover:bg-secondary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-sm" data-title="News App" data-repo="https://github.com/ravikumarsaini3/News_app_flutter">
+                            Generate Description ✨
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project Card 2: Movie List App -->
+                <div class="project-card bg-card-dark rounded-lg shadow-lg overflow-hidden border border-border-dark p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold text-text-dark mb-2">Movie List App</h3>
+                    <p class="project-description text-gray-400 mb-4 flex-grow">A Flutter application to browse and discover movies, complete with details and ratings.</p>
+                    <div class="flex space-x-2 mt-auto">
+                        <a href="https://github.com/ravikumarsaini3/movies_list_app" target="_blank" class="flex-1 inline-block bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-center text-sm">
+                            View Repository &rarr;
+                        </a>
+                        <button class="generate-desc-btn flex-1 bg-secondary hover:bg-secondary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-sm" data-title="Movie List App" data-repo="https://github.com/ravikumarsaini3/movies_list_app">
+                            Generate Description ✨
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project Card 3: Covid Tracker App -->
+                <div class="project-card bg-card-dark rounded-lg shadow-lg overflow-hidden border border-border-dark p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold text-text-dark mb-2">Covid Tracker App</h3>
+                    <p class="project-description text-gray-400 mb-4 flex-grow">An application to track Covid-19 statistics globally with an interactive UI.</p>
+                    <div class="flex space-x-2 mt-auto">
+                        <a href="https://github.com/ravikumarsaini3/covid-tracker-app" target="_blank" class="flex-1 inline-block bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-center text-sm">
+                            View Repository &rarr;
+                        </a>
+                        <button class="generate-desc-btn flex-1 bg-secondary hover:bg-secondary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-sm" data-title="Covid Tracker App" data-repo="https://github.com/ravikumarsaini3/covid-tracker-app">
+                            Generate Description ✨
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Project Card 4: Chat Application -->
+                <div class="project-card bg-card-dark rounded-lg shadow-lg overflow-hidden border border-border-dark p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold text-text-dark mb-2">Chat Application</h3>
+                    <p class="project-description text-gray-400 mb-4 flex-grow">A real-time chat application built with Firebase for seamless messaging.</p>
+                    <div class="flex space-x-2 mt-auto">
+                        <a href="https://github.com/ravikumarsaini3/chatapp" target="_blank" class="flex-1 inline-block bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-center text-sm">
+                            View Repository &rarr;
+                        </a>
+                        <button class="generate-desc-btn flex-1 bg-secondary hover:bg-secondary/80 transition duration-300 text-white font-bold py-2 px-3 rounded-lg shadow-lg text-sm" data-title="Chat Application" data-repo="https://github.com/ravikumarsaini3/chatapp">
+                            Generate Description ✨
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- "See All Projects" button -->
+            <div class="mt-12 text-center">
+                <a href="https://github.com/ravikumarsaini3" target="_blank" class="inline-block bg-card-dark hover:bg-card-dark/80 transition duration-300 text-gray-400 font-bold py-3 px-8 rounded-lg shadow-lg">
+                    See All Projects on GitHub &rarr;
+                </a>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 md:py-24">
+            <h2 class="text-3xl font-bold text-center text-text-dark mb-12">Get In Touch</h2>
+            <div class="flex flex-col items-center text-center max-w-2xl mx-auto space-y-6 bg-card-dark rounded-lg p-8 shadow-xl">
+                <p class="text-lg text-gray-400">
+                    I'm currently open to new opportunities. Whether you have a project idea, a job offer, or just want to say hi, feel free to reach out.
+                </p>
+                <button id="say-hello-btn" class="inline-block bg-primary hover:bg-primary/80 transition duration-300 text-white font-bold py-3 px-8 rounded-lg shadow-lg">
+                    Say Hello
+                </button>
+                <div class="flex items-center space-x-6 pt-4">
+                    <!-- Social Media Links -->
+                    <a href="https://www.linkedin.com/in/ravi-kumar-737021294/" target="_blank" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-linkedin text-3xl"></i>
+                    </a>
+                    <a href="https://github.com/ravikumarsaini3" target="_blank" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-github text-3xl"></i>
+                    </a>
+                    <a href="https://www.instagram.com/ravi_saini_39/" target="_blank" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-instagram text-3xl"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-gray-400 text-sm">
+        <p>&copy; 2024 Ravi Kumar. All rights reserved.</p>
+    </footer>
+
+    <!-- Simple Modal for displaying the pitch -->
+    <div id="pitch-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal-id="pitch-modal">&times;</span>
+            <h3 class="text-2xl font-bold text-text-dark mb-4">Your Elevator Pitch</h3>
+            <div id="pitch-text" class="text-gray-400">
+                <!-- Generated pitch will be inserted here -->
+            </div>
+            <div id="loading-spinner-pitch" class="hidden flex justify-center items-center mt-4">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for displaying generated project descriptions -->
+    <div id="project-desc-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal-id="project-desc-modal">&times;</span>
+            <h3 id="project-desc-title" class="text-2xl font-bold text-text-dark mb-4"></h3>
+            <div id="project-desc-text" class="text-gray-400"></div>
+            <div id="loading-spinner-project" class="hidden flex justify-center items-center mt-4">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for displaying skill explanations -->
+    <div id="skill-explain-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal-id="skill-explain-modal">&times;</span>
+            <h3 id="skill-explain-title" class="text-2xl font-bold text-text-dark mb-4"></h3>
+            <div id="skill-explain-text" class="text-gray-400"></div>
+            <div id="loading-spinner-skill" class="hidden flex justify-center items-center mt-4">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for "Say Hello" confirmation -->
+    <div id="hello-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" data-modal-id="hello-modal">&times;</span>
+            <h3 class="text-2xl font-bold text-text-dark mb-4">Contact Me</h3>
+            <p class="text-lg text-gray-400 mb-4">
+                You're about to open your email client to contact me.
+            </p>
+            <div class="flex justify-end space-x-4">
+                <button id="cancel-hello-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg">Cancel</button>
+                <a id="confirm-hello-btn" href="mailto:ravik392320@gmail.com" class="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-6 rounded-lg">Proceed</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Mobile Nav Toggle, Theme Toggle & Typewriter Effect -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const htmlElement = document.documentElement;
+
+            // Set initial theme based on system preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                htmlElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+
+            // Handle manual theme toggle
+            themeToggleBtn.addEventListener('click', () => {
+                if (htmlElement.classList.contains('dark')) {
+                    htmlElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    htmlElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            });
+
+            // Typewriter Effect Logic
+            const typewriterElement = document.getElementById('typewriter-text');
+            const phrases = [
+                "I'm a passionate and creative Flutter Developer.",
+                "I build beautiful and functional mobile applications.",
+                "I'm an expert in advanced state management.",
+            ];
+
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function type() {
+                const currentPhrase = phrases[phraseIndex];
+                const displayedText = isDeleting
+                    ? currentPhrase.substring(0, charIndex--)
+                    : currentPhrase.substring(0, charIndex++);
+                
+                typewriterElement.textContent = displayedText;
+
+                let typingSpeed = isDeleting ? 30 : 70;
+                
+                if (!isDeleting && charIndex > currentPhrase.length) {
+                    typingSpeed = 2000; // Pause at end of phrase
+                    isDeleting = true;
+                } else if (isDeleting && charIndex < 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    typingSpeed = 500; // Pause before typing next phrase
+                }
+                
+                setTimeout(type, typingSpeed);
+            }
+            type();
+
+            // Use the data from the uploaded files directly
+            const profilePicElement = document.getElementById('profile-pic');
+            const imageData = 'uploaded:WhatsApp Image 2024-09-19 at 8.33.01 AM.jpeg'; 
+            
+            // Set the profile picture source
+            profilePicElement.src = imageData;
+            
+            // Gemini API Integration for Elevator Pitch
+            const generatePitchBtn = document.getElementById('generate-pitch-btn');
+            const professionalSummary = document.getElementById('professional-summary').innerText;
+            const pitchModal = document.getElementById('pitch-modal');
+            const pitchText = document.getElementById('pitch-text');
+            const closeButtons = document.querySelectorAll('.close-btn');
+            const loadingSpinnerPitch = document.getElementById('loading-spinner-pitch');
+            
+            // Gemini API Integration for Project Descriptions
+            const generateDescButtons = document.querySelectorAll('.generate-desc-btn');
+            const projectDescModal = document.getElementById('project-desc-modal');
+            const projectDescTitle = document.getElementById('project-desc-title');
+            const projectDescText = document.getElementById('project-desc-text');
+            const loadingSpinnerProject = document.getElementById('loading-spinner-project');
+            
+            // Gemini API Integration for Skill Explanations
+            const explainSkillButtons = document.querySelectorAll('.explain-skill-btn');
+            const skillExplainModal = document.getElementById('skill-explain-modal');
+            const skillExplainTitle = document.getElementById('skill-explain-title');
+            const skillExplainText = document.getElementById('skill-explain-text');
+            const loadingSpinnerSkill = document.getElementById('loading-spinner-skill');
+
+
+            // Reusable API call function with exponential backoff
+            const callGeminiAPI = async (systemPrompt, userQuery) => {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=`;
+                const payload = {
+                    contents: [{
+                        parts: [{
+                            text: userQuery
+                        }]
+                    }],
+                    systemInstruction: {
+                        parts: [{
+                            text: systemPrompt
+                        }]
+                    },
+                };
+                const maxRetries = 3;
+                let currentRetry = 0;
+                let response;
+                
+                while (currentRetry < maxRetries) {
+                    try {
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload),
+                        });
+                        if (response.status !== 429) {
+                            break;
+                        }
+                        currentRetry++;
+                        const delay = Math.pow(2, currentRetry) * 1000;
+                        await new Promise(res => setTimeout(res, delay));
+                    } catch (error) {
+                        currentRetry++;
+                        const delay = Math.pow(2, currentRetry) * 1000;
+                        await new Promise(res => setTimeout(res, delay));
+                    }
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+                const result = await response.json();
+                return result.candidates[0].content.parts[0].text;
+            };
+
+            // Open the modal
+            const openModal = (modalId) => {
+                document.getElementById(modalId).style.display = 'block';
+            };
+
+            // Close the modal
+            const closeModal = (modalId) => {
+                document.getElementById(modalId).style.display = 'none';
+            };
+
+            // Add event listeners for all close buttons
+            closeButtons.forEach(btn => {
+                btn.onclick = () => closeModal(btn.getAttribute('data-modal-id'));
+            });
+
+            window.onclick = (event) => {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            };
+
+            // Pitch Generation
+            generatePitchBtn.addEventListener('click', async () => {
+                openModal('pitch-modal');
+                pitchText.innerText = '';
+                loadingSpinnerPitch.classList.remove('hidden');
+
+                const systemPrompt = "Act as a professional career coach. Based on the following professional summary, generate a concise, 3-4 sentence elevator pitch. The tone should be confident and engaging. Do not include any greeting or introduction. Just provide the pitch.";
+                const userQuery = `Professional Summary: ${professionalSummary}`;
+                
+                try {
+                    const generatedText = await callGeminiAPI(systemPrompt, userQuery);
+                    pitchText.innerText = generatedText;
+                } catch (error) {
+                    console.error('API Error:', error);
+                    pitchText.innerText = "Error: An issue occurred while generating the pitch. Please try again later.";
+                } finally {
+                    loadingSpinnerPitch.classList.add('hidden');
+                }
+            });
+            
+            // Project Description Generation
+            generateDescButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const title = button.dataset.title;
+                    const repo = button.dataset.repo;
+                    const systemPrompt = `You are a professional technical writer. Based on a project titled "${title}" with a repository link of "${repo}", generate a compelling 3-4 sentence project description. Focus on the project's purpose, key features, and what makes it unique. Do not mention the GitHub URL in the response.`;
+                    const userQuery = `Generate a detailed project description for a project named: ${title}.`;
+                    
+                    openModal('project-desc-modal');
+                    projectDescTitle.innerText = title;
+                    projectDescText.innerText = '';
+                    loadingSpinnerProject.classList.remove('hidden');
+
+                    try {
+                        const generatedText = await callGeminiAPI(systemPrompt, userQuery);
+                        projectDescText.innerText = generatedText;
+                    } catch (error) {
+                        console.error('API Error:', error);
+                        projectDescText.innerText = "Error: Could not generate a description. Please try again.";
+                    } finally {
+                        loadingSpinnerProject.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Skill Explanation Generation
+            explainSkillButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const skillName = button.closest('.skill-card').dataset.skill;
+                    const systemPrompt = `You are a friendly and knowledgeable technical mentor. Explain the concept of "${skillName}" in simple, easy-to-understand terms for a beginner. Provide a short, concise paragraph.`;
+                    const userQuery = `What is ${skillName}?`;
+
+                    openModal('skill-explain-modal');
+                    skillExplainTitle.innerText = skillName;
+                    skillExplainText.innerText = '';
+                    loadingSpinnerSkill.classList.remove('hidden');
+
+                    try {
+                        const generatedText = await callGeminiAPI(systemPrompt, userQuery);
+                        skillExplainText.innerText = generatedText;
+                    } catch (error) {
+                        console.error('API Error:', error);
+                        skillExplainText.innerText = "Error: Could not generate an explanation. Please try again.";
+                    } finally {
+                        loadingSpinnerSkill.classList.add('hidden');
+                    }
+                });
+            });
+
+
+            // "Say Hello" Button functionality
+            const sayHelloBtn = document.getElementById('say-hello-btn');
+            const helloModal = document.getElementById('hello-modal');
+            const cancelHelloBtn = document.getElementById('cancel-hello-btn');
+            const confirmHelloBtn = document.getElementById('confirm-hello-btn');
+
+            sayHelloBtn.addEventListener('click', () => {
+                openModal('hello-modal');
+            });
+            
+            cancelHelloBtn.addEventListener('click', () => {
+                closeModal('hello-modal');
+            });
+            
+            confirmHelloBtn.addEventListener('click', () => {
+                closeModal('hello-modal');
+            });
+        });
+    </script>
+</body>
+</html>
